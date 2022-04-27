@@ -25,6 +25,30 @@ const CreateBlog = async function (req, res) {
 }
 
 
+const GetData = async function (req, res) {
+    try {
+      let query = req.query;
+  
+      let GetRecord = await blogModel.find({
+        $and: [{ isPublished: true, isDeleted: false, ...query }],
+      });
+      //   console.log(GetRecord)
+      if (GetRecord.length == 0) {
+        return res.status(404).send({
+          msg: "No such document exist with the given attributes.",
+        });
+      }
+      res.status(200).send({ status: true, msg: GetRecord });
+    } catch (err) {
+      res.status(500).send({ status: false, msg: err.message });
+    }
+  };
+
+
+
+
+
+
 
 const updateBlog = async function (req, res) {
     try {
@@ -88,3 +112,5 @@ module.exports.CreateBlog = CreateBlog
 module.exports.updateBlog = updateBlog
 module.exports.deleteBlog = deleteBlog
 module.exports.deleteQuery = deleteQuery
+
+module.exports.GetData = GetData

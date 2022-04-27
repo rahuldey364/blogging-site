@@ -9,6 +9,7 @@ const { route } = require('express/lib/application');
 
 router.post("/createAuthor", authorController.createAuthor)
 router.post("/CreateBlog",blogController.CreateBlog)
+router.get('/GetData',blogController.GetData)
 router.put("/blogs/:blogId" , blogController.updateBlog)
 router.delete("/blogs/:blogId" ,blogController.deleteBlog)
 router.delete("/blogs",blogController.deleteQuery)
