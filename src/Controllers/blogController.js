@@ -1,4 +1,4 @@
-//const jwt = require("jsonwebtoken");
+
 const blogModel = require("../Models/blogModel")
 const authorModel = require("../Models/authorModel")
 
@@ -44,7 +44,26 @@ const updateBlog = async function (req, res) {
     }
 }
 
+const deleteBlog = async function (req, res) {
+    try{
+    let blogsId = req.params.blogId;
+    let blog = await blogModel.findById({ _id: blogsId });
+    //Return an error if no user with the given id exists in db
+    if (!blog) {
+      return res.status(404).send("No such user exists");
+    }
+    let blogData = req.body
+    let deleteBlogs = await blogModel.findOneAndUpdate({ _id: blogsId }, {$set:{ isDeleted: true }} , { new: true });
+    res.status(200).send({ status: blogData, data: deleteBlogs })
+  }
+  catch (err) {
+    console.log("This is the error 1", err.massage)
+    res.status(500).send({ msg: "Error", error:err.massage})
+  }
+}
+
 
 
 module.exports.CreateBlog = CreateBlog
 module.exports.updateBlog=updateBlog
+module.exports.deleteBlog=deleteBlog
