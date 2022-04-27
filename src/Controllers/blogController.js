@@ -28,7 +28,6 @@ const CreateBlog = async function (req, res) {
 const GetData = async function (req, res) {
     try {
       let query = req.query;
-  
       let GetRecord = await blogModel.find({
         $and: [{ isPublished: true, isDeleted: false, ...query }],
       });
@@ -95,7 +94,7 @@ const deleteQuery = async function (req, res) {
     try {
         let data = req.query
         const filterbyquery = await blogModel.find({...data})
-        if (filterbyquery.length == 0) { return res.send({ status: false, mag: "No Such blogs" }) }
+        if (filterbyquery.length == 0) { return res.send({ status: false, msg: "No Such blogs" }) }
 
         const deleteDetails = await blogModel.findOneAndUpdate({...data},{$set:{ isDeleted: true, deletedAt: new Date() }},{new: true })
         res.status(201).send({ status: true, msg: deleteDetails })
