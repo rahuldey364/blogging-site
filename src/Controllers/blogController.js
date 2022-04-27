@@ -6,19 +6,19 @@ const authorModel = require("../Models/authorModel")
 const CreateBlog = async function (req, res) {
     try {
         let author_id = req.body.authorId
-        console.log(author_id)
+        // console.log(author_id)
         let authorDetail = await authorModel.findById(author_id)
-        console.log(authorDetail)
+        // console.log(authorDetail)
         if (!authorDetail) {
             return res.status(404).send("No Such Author exists")
         }
         let blog = req.body
-        console.log(blog)
+        // console.log(blog)
         let blogCreate = await blogModel.create(blog)
         res.status(201).send({ msg: blogCreate });
     }
     catch (err) {
-        console.log("This is the error 1", err.message)
+        // console.log("This is the error 1", err.message)
         res.status(500).send({ msg: "Error", error: err.message })
     }
 
@@ -27,21 +27,21 @@ const CreateBlog = async function (req, res) {
 
 const GetData = async function (req, res) {
     try {
-      let query = req.query;
-      let GetRecord = await blogModel.find({
-        $and: [{ isPublished: true, isDeleted: false, ...query }],
-      });
-      //   console.log(GetRecord)
-      if (GetRecord.length == 0) {
-        return res.status(404).send({
-          msg: "No such document exist with the given attributes.",
+        let query = req.query;
+
+        let GetRecord = await blogModel.find({
+            $and: [{ isPublished: true, isDeleted: false, ...query }],
         });
-      }
-      res.status(200).send({ status: true, msg: GetRecord });
+        if (GetRecord.length == 0) {
+            return res.status(404).send({
+                msg: "No such document exist with the given attributes.",
+            });
+        }
+        res.status(200).send({ status: true, msg: GetRecord });
     } catch (err) {
-      res.status(500).send({ status: false, msg: err.message });
+        res.status(500).send({ status: false, msg: err.message });
     }
-  };
+};
 
 
 
@@ -73,18 +73,21 @@ const updateBlog = async function (req, res) {
 const deleteBlog = async function (req, res) {
     try {
         let blogsId = req.params.blogId;
-        let blog = await blogModel.findById({ _id: blogsId });
+        //console.log(blogsId)
+        let blog = await blogModel.findById(blogsId);
         //Return an error if no user with the given id exists in db
         if (!blog) {
-            return res.status(404).send("No such user exists");
+            return res.status(404).send({ status: false, msg: "No such Blog exists" });
         }
-        let blogData = req.body
-        let deleteBlogs = await blogModel.findOneAndUpdate({ _id: blogsId }, { $set: { isDeleted: true } }, { new: true });
-        res.status(200).send({ status: blogData, data: deleteBlogs })
+        if (blog.isDeleted === true) {
+            return res.status(404).send({ status: false, msg: "Blog already deleted" })
+        }
+        let deleteBlogs = await blogModel.findOneAndUpdate({ _id: blogsId }, { $set: { isDeleted: true, deletedAt: new Date() } }, { new: true });
+        res.status(200).send({ status: true, data: deleteBlogs })
     }
     catch (err) {
         console.log("This is the error 1", err.massage)
-        res.status(500).send({ msg: "Error", error: err.massage })
+        res.status(500).send({ status: false, msg: err.massage })
     }
 }
 
@@ -93,15 +96,16 @@ const deleteBlog = async function (req, res) {
 const deleteQuery = async function (req, res) {
     try {
         let data = req.query
-        const filterbyquery = await blogModel.find({...data})
-        if (filterbyquery.length == 0) { return res.send({ status: false, msg: "No Such blogs" }) }
+        const filterbyquery = await blogModel.find(data)
+        if (filterbyquery.length === 0) { return res.send({ status: false, mag: "No Such blogs" }) }
 
-        const deleteDetails = await blogModel.findOneAndUpdate({...data},{$set:{ isDeleted: true, deletedAt: new Date() }},{new: true })
+        const deleteDetails = await blogModel.updateMany(data, { $set: { isDeleted: true, deletedAt: new Date() } }, { new: true })
+        console.log(deleteDetails)
         res.status(201).send({ status: true, msg: deleteDetails })
     }
     catch (err) {
         console.log("This is the error 1", err.massage)
-        res.status(500).send({ msg: "Error", error: err.massage })
+        res.status(500).send({ status: false, msg: err.massage })
     }
 }
 
