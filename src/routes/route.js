@@ -9,10 +9,9 @@ const { route } = require('express/lib/application');
 
 router.post("/createAuthor", authorController.createAuthor)
 router.post("/CreateBlog",blogController.CreateBlog)
-
-
 router.put("/blogs/:blogId" , blogController.updateBlog)
-router.delete("/deleteBlog/:blogId" ,blogController.deleteBlog)
+router.delete("/blogs/:blogId" ,blogController.deleteBlog)
+router.delete("/blogs",blogController.deleteQuery)
 
 
 module.exports = router;
