@@ -10,16 +10,16 @@ const CreateBlog = async function (req, res) {
         let authorDetail = await authorModel.findById(author_id)
         // console.log(authorDetail)
         if (!authorDetail) {
-            return res.status(404).send("No Such Author exists")
+            return res.status(404).send({ status: false, msg: "No Such Author exists" })
         }
         let blog = req.body
         // console.log(blog)
         let blogCreate = await blogModel.create(blog)
-        res.status(201).send({ msg: blogCreate });
+        res.status(201).send({ status: true, msg: blogCreate });
     }
     catch (err) {
         // console.log("This is the error 1", err.message)
-        res.status(500).send({ msg: "Error", error: err.message })
+        res.status(500).send({ status: false, msg: err.message })
     }
 
 }
@@ -28,7 +28,7 @@ const CreateBlog = async function (req, res) {
 const GetData = async function (req, res) {
     try {
         let query = req.query;
-
+        console.log(query)
         let GetRecord = await blogModel.find({
             $and: [{ isPublished: true, isDeleted: false, ...query }],
         });
@@ -42,12 +42,6 @@ const GetData = async function (req, res) {
         res.status(500).send({ status: false, msg: err.message });
     }
 };
-
-
-
-
-
-
 
 const updateBlog = async function (req, res) {
     try {
@@ -64,7 +58,7 @@ const updateBlog = async function (req, res) {
         res.status(201).send({ status: true, msg: updatedDetails })
     } catch (err) {
         console.log("This is the error 1", err.message)
-        res.status(500).send({ msg: "Error", error: err.message })
+        res.status(500).send({ status: false, msg: err.message })
     }
 }
 
@@ -97,7 +91,7 @@ const deleteQuery = async function (req, res) {
     try {
         let data = req.query
         const filterbyquery = await blogModel.find(data)
-        if (filterbyquery.length === 0) { return res.send({ status: false, mag: "No Such blogs" }) }
+        if (filterbyquery.length === 0) { return res.status(404).send({ status: false, mag: "No Such blogs" }) }
 
         const deleteDetails = await blogModel.updateMany(data, { $set: { isDeleted: true, deletedAt: new Date() } }, { new: true })
         console.log(deleteDetails)
