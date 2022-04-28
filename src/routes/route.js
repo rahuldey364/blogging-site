@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const blogController = require("../Controllers/blogController")
+const blogController = require("../Controllers/blogController");
 const authorController = require("../Controllers/authorController");
 const { route } = require('express/lib/application');
-const loginController= require("../Controllers/loginController")
-const auth = require("../Middlewares/auth")
+const loginController= require("../Controllers/loginController");
+const auth = require("../Middlewares/auth");
 
 
 

@@ -6,6 +6,7 @@ const authorModel = require("../Models/authorModel")
 const CreateBlog = async function (req, res) {
     try {
         let author_id = req.body.authorId
+        
         // console.log(author_id)
         let authorDetail = await authorModel.findById(author_id)
         // console.log(authorDetail)
@@ -13,6 +14,19 @@ const CreateBlog = async function (req, res) {
             return res.status(404).send({ status: false, msg: "No Such Author exists" })
         }
         let blog = req.body
+        //handling edge cases
+        if (Object.keys(blog).length>0){
+            return res.status(401).send({status:false,msg:"Provide Blog details"})
+        }
+        if(!blog.title){
+            return res.status(401).send({status:false,msg:"Blog title is required"})
+        }if(!blog.body){
+            return res.status(400).send({status:false,msg:"Blog body is required"})
+        }if(!blog.authorId){
+            return res.status(400).send({status:false,msg:"Blog authorId is required"})
+        }if(!blog.category){
+            return res.status(400).send({status:false,msg:"Blog category is required"})
+        }
         // console.log(blog)
         let blogCreate = await blogModel.create(blog)
         res.status(201).send({ status: true, msg: blogCreate });
@@ -28,7 +42,7 @@ const CreateBlog = async function (req, res) {
 const GetData = async function (req, res) {
     try {
         let query = req.query;
-        console.log(query)
+        //console.log(query)
         let GetRecord = await blogModel.find({
             $and: [{ isPublished: true, isDeleted: false, ...query }],
         });
@@ -50,6 +64,9 @@ const updateBlog = async function (req, res) {
         if (!blogId) { return res.status(400).send({ status: false, msg: "Please enter a blog id" }) }
         const isvalidId = await blogModel.findById(blogId)
         if (!isvalidId) { return res.status(401).send({ status: false, msg: "Please enter a valid blogId" }) }
+        if(details.tags.length==0 || details.subcategory.length==0){
+            return res.status(400).send({ status: false, msg: "tags and subcategory is required to update a blog" })
+        }
         const updatedDetails = await blogModel.findOneAndUpdate(
             { _id: blogId },
             { title: details.title, body: details.body, tags: details.tags, subcategory: details.subcategory, isPublished: true, publishedAt: new Date() },
@@ -67,6 +84,9 @@ const updateBlog = async function (req, res) {
 const deleteBlog = async function (req, res) {
     try {
         let blogsId = req.params.blogId;
+        if(!blogsId){
+            return res.status(401).send({status:false,msg:"Please enter a blogId"})
+        }
         //console.log(blogsId)
         let blog = await blogModel.findById(blogsId);
         //Return an error if no user with the given id exists in db
@@ -90,11 +110,15 @@ const deleteBlog = async function (req, res) {
 const deleteQuery = async function (req, res) {
     try {
         let data = req.query
+        console.log(data)
+        if(Object.keys(data).length == 0 ){
+            return res.status(401).send({status:false,msg:"enter details for delete blogs"})
+        }
         const filterbyquery = await blogModel.find(data)
         if (filterbyquery.length === 0) { return res.status(404).send({ status: false, mag: "No Such blogs" }) }
 
         const deleteDetails = await blogModel.updateMany(data, { $set: { isDeleted: true, deletedAt: new Date() } }, { new: true })
-        console.log(deleteDetails)
+        // console.log(deleteDetails)
         res.status(201).send({ status: true, msg: deleteDetails })
     }
     catch (err) {
