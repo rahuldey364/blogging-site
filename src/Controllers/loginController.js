@@ -14,7 +14,7 @@ const authorLogin = async function(req,res){
             },
             "project-1/group-34"
         )
-        res.setHeader("x-api-key",token)
+        // res.setHeader("x-api-key",token)
         res.status(201).send({status:true,msg:token})
     }catch(err){
         res.status(500).send({status:false,msg:err.message})

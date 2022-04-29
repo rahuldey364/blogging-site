@@ -64,9 +64,9 @@ const updateBlog = async function (req, res) {
         if (!blogId) { return res.status(400).send({ status: false, msg: "Please enter a blog id" }) }
         const isvalidId = await blogModel.findById(blogId)
         if (!isvalidId) { return res.status(401).send({ status: false, msg: "Please enter a valid blogId" }) }
-        if(details.tags.length==0 || details.subcategory.length==0){
-            return res.status(400).send({ status: false, msg: "tags and subcategory is required to update a blog" })
-        }
+        // if(details.tags.length==0 || details.subcategory.length==0){
+        //     return res.status(400).send({ status: false, msg: "tags and subcategory is required to update a blog" })
+        // }
         const updatedDetails = await blogModel.findOneAndUpdate(
             { _id: blogId },
             { title: details.title, body: details.body, tags: details.tags, subcategory: details.subcategory, isPublished: true, publishedAt: new Date() },
