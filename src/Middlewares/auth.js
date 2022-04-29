@@ -8,7 +8,7 @@ let authentication = async function (req, res, next) {
         let decodedToken = jwt.verify(token, "project-1/group-34")
         console.log(decodedToken)
         if (!decodedToken) { return res.status(403).send({ status: false, msg: "Token is invalid" }) }
-        req.decodedToken = decodedToken
+        //req.decodedToken = decodedToken
         next()
     } catch (err) {
         res.status(500).send({ status: false, msg: err.message })
