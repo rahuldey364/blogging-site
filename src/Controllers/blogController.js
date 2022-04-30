@@ -1,20 +1,13 @@
 const blogModel = require("../Models/blogModel");
 const authorModel = require("../Models/authorModel");
 
+// solution POST /blogs
 const CreateBlog = async function (req, res) {
   try {
-    let author_id = req.body.authorId; 
-    // console.log(author_id)
-    let authorDetail = await authorModel.findById(author_id);
-    // console.log(authorDetail)
-    if (!authorDetail) {
-      return res
-        .status(404)
-        .send({ status: false, msg: "No Such Author exists" });
-    }
     let blog = req.body;
+    console.log(blog);
     //handling edge cases
-    if (Object.keys(blog).length > 0) {
+    if (Object.keys(blog).length == 0) {
       return res
         .status(401)
         .send({ status: false, msg: "Provide Blog details" });
@@ -24,20 +17,49 @@ const CreateBlog = async function (req, res) {
         .status(401)
         .send({ status: false, msg: "Blog title is required" });
     }
+    if (Object.keys(blog.title).length == 0 || blog.title.length == 0) {
+      return res
+        .status(401)
+        .send({ status: false, msg: "Enter a valid title" });
+    }
     if (!blog.body) {
       return res
         .status(400)
         .send({ status: false, msg: "Blog body is required" });
     }
-    if (!blog.authorId) {
-      return res
-        .status(400)
-        .send({ status: false, msg: "Blog authorId is required" });
+    if (Object.keys(blog.body).length == 0 || blog.body.length == 0) {
+      return res.status(401).send({ status: false, msg: "Enter a valid body" });
     }
+    let author_id = req.body.authorId;
+    if (!author_id) {
+      return res
+        .status(401)
+        .send({ status: false, msg: "First Name is required" });
+    }
+    if (Object.keys(author_id).length == 0 || author_id.length == 0) {
+      return res
+        .status(401)
+        .send({ status: false, msg: "Enter a valid first name" });
+    }
+
+    // console.log(author_id)
+    let authorDetail = await authorModel.findById(author_id);
+    // console.log(authorDetail)
+    if (!authorDetail) {
+      return res
+        .status(404)
+        .send({ status: false, msg: "No Such Author exists" });
+    }
+
     if (!blog.category) {
       return res
         .status(400)
         .send({ status: false, msg: "Blog category is required" });
+    }
+    if (Object.keys(blog.category).length == 0 || blog.category.length == 0) {
+      return res
+        .status(401)
+        .send({ status: false, msg: "Enter a valid category" });
     }
     // console.log(blog)
     let blogCreate = await blogModel.create(blog);
@@ -48,13 +70,15 @@ const CreateBlog = async function (req, res) {
   }
 };
 
+//GET /blogs
 const GetData = async function (req, res) {
   try {
     let query = req.query;
-    //console.log(query)
+
+    console.log(query);
     let GetRecord = await blogModel.find({
       $and: [{ isPublished: true, isDeleted: false, ...query }],
-    });
+    }).populate("authorId")
     if (GetRecord.length == 0) {
       return res.status(404).send({
         msg: "No such document exist with the given attributes.",
@@ -81,16 +105,26 @@ const updateBlog = async function (req, res) {
         .status(401)
         .send({ status: false, msg: "Please enter a valid blogId" });
     }
-    // if(details.tags.length==0 || details.subcategory.length==0){
-    //     return res.status(400).send({ status: false, msg: "tags and subcategory is required to update a blog" })
-    // }
+    if (!details.tags || details.tags.length == 0) {
+      return res.status(400).send({
+        status: false,
+        msg: "tags  is required to update a blog",
+      });
+    }
+    if (!details.subcategory || details.subcategory.length == 0) {
+      return res.status(400).send({
+        status: false,
+        msg: "subcategory is reqired to update a blog",
+      });
+    }
     const updatedDetails = await blogModel.findOneAndUpdate(
       { _id: blogId },
       {
         title: details.title,
         body: details.body,
+        $push:{
         tags: details.tags,
-        subcategory: details.subcategory,
+        subcategory: details.subcategory},
         isPublished: true,
         publishedAt: new Date(),
       },
@@ -103,6 +137,7 @@ const updateBlog = async function (req, res) {
   }
 };
 
+//DELETE /blogs/:blogId
 const deleteBlog = async function (req, res) {
   try {
     let blogsId = req.params.blogId;
@@ -131,11 +166,11 @@ const deleteBlog = async function (req, res) {
     );
     res.status(200).send({ status: true, data: deleteBlogs });
   } catch (err) {
-    console.log("This is the error 1", err.massage);
     res.status(500).send({ status: false, msg: err.massage });
   }
 };
 
+//DELETE /blogs?queryParams
 const deleteQuery = async function (req, res) {
   try {
     let data = req.query;//as a object //{ body: 'all is well' }

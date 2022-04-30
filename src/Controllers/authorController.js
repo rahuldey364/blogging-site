@@ -3,11 +3,15 @@ const authorModel = require("../Models/authorModel");
 const createAuthor = async function (req, res) {
   try {
     let data = req.body;
-    if (!data.fname) {
-      return res
-        .status(401)
-        .send({ status: false, msg: "First Name is required" });
+    if (!req.bady.fname) {
+      res.status(401).send({ status: false, msg: "First Name is required" });
     }
+    if (Object.keys(req.body.fname).length == 0 || req.body.fname.length == 0) {
+      res.status(401).send({ status: false, msg: "Enter a valid first name" });
+    }
+    let saved = await authorModel.create(data);
+    res.status(200).send({ status: true, msg: saved });
+
     if (Object.keys(data.fname).length == 0 || data.fname.length == 0) {
       return res
         .status(401)
@@ -39,9 +43,9 @@ const createAuthor = async function (req, res) {
         .status(401)
         .send({ status: false, msg: "plz enter a valid Email" });
     }
-    let checkIfemailExist = await authorModel.findOne({email:data.email})
-    if(Object.keys(checkIfemailExist).length != 0){
-        return res
+    let checkIfemailExist = await authorModel.findOne({ email: data.email });
+    if (Object.keys(checkIfemailExist).length != 0) {
+      return res
         .status(401)
         .send({ status: false, msg: "email already exist" });
     }
@@ -55,7 +59,6 @@ const createAuthor = async function (req, res) {
         .status(401)
         .send({ status: false, msg: "plz enter the valid Password" });
     }
-    let saved = await authorModel.create(data);
     res.status(200).send({ status: true, msg: saved });
   } catch (err) {
     console.log("This is the err", err.message);

@@ -4,12 +4,12 @@ const jwt = require("jsonwebtoken");
 const authorLogin = async function (req, res) {
   try {
     let authorEmail = req.body.email;
-    let authorPassword = req.body.password;
     if (!/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(req.body.email)) {
       return res
         .status(401)
         .send({ status: false, msg: "plz enter the valid Email" });
     }
+    let authorPassword = req.body.password;
     if (req.body.password.trim().length <= 6) {
       return res
         .status(401)
@@ -19,7 +19,6 @@ const authorLogin = async function (req, res) {
       email: authorEmail,
       password: authorPassword,
     });
-    console.log(isAuthor);
     if (!isAuthor) {
       return res
         .status(404)
