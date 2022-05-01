@@ -14,7 +14,7 @@ let authentication = async function (req, res, next) {
     req.decodedToken = decodedToken;
     next();
   } catch (err) {
-    res.status(500).send({ status: false, msg: "Authentication failed" });
+    res.status(401).send({ status: false, msg: "Authentication failed" });
   }
 };
 
