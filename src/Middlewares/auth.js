@@ -28,7 +28,7 @@ let authorization = async function (req, res, next) {
         .status(401)
         .send({ status: false, msg: "Please enter a valid blogId" });
     }
-    console.log(isvalidId);
+    // console.log(isvalidId);
     let authorToBeModified = isvalidId.authorId.toString();
     let authorLoggedin = decodedToken.authorId;
     if (authorToBeModified !== authorLoggedin) {
