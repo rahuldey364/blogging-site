@@ -6,17 +6,15 @@ let authentication = async function (req, res, next) {
   try {
     let token = req.headers["x-api-key"];
     if (!token) {
-      return res.status(403).send({ status: false, msg: "Token not present" });
+      return res.status(401).send({ status: false, msg: "Token not present" });
     }
+
     let decodedToken = jwt.verify(token, "project-1/group-34");
-    console.log(decodedToken);
-    if (!decodedToken) {
-      return res.status(403).send({ status: false, msg: "Token is invalid" });
-    }
+    
     req.decodedToken = decodedToken;
     next();
   } catch (err) {
-    res.status(500).send({ status: false, msg: err.message });
+    res.status(401).send({ status: false, msg: "Authentication failed" });
   }
 };
 
@@ -24,7 +22,12 @@ let authorization = async function (req, res, next) {
   try {
     decodedToken = req.decodedToken;
     blogId = req.params.blogId;
-    const isvalidId = await blogModel.findById(blogId);
+    const isvalidId = await blogModel.findOne({_id:blogId,isDeleted:false});
+    if (!isvalidId) {
+      return res
+        .status(401)
+        .send({ status: false, msg: "Please enter a valid blogId" });
+    }
     console.log(isvalidId);
     let authorToBeModified = isvalidId.authorId.toString();
     let authorLoggedin = decodedToken.authorId;

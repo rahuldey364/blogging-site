@@ -99,19 +99,19 @@ const updateBlog = async function (req, res) {
         .status(400)
         .send({ status: false, msg: "Please enter a blog id" });
     }
-    const isvalidId = await blogModel.findById(blogId);
-    if (!isvalidId) {
-      return res
-        .status(401)
-        .send({ status: false, msg: "Please enter a valid blogId" });
-    }
-    if (!details.tags || details.tags.length == 0) {
+    // const isvalidId = await blogModel.find({_id:blogId,isDeleted:false});
+    // if (isvalidId.length ==0) {
+    //   return res
+    //     .status(401)
+    //     .send({ status: false, msg: "Please enter a valid blogId" });
+    // }
+    if (!details.tags || details.tags.length == 0 || Object.keys(details.tags).length==0) {
       return res.status(400).send({
         status: false,
         msg: "tags  is required to update a blog",
       });
     }
-    if (!details.subcategory || details.subcategory.length == 0) {
+    if (!details.subcategory || details.subcategory.length == 0 || Object.keys(details.subcategory).length==0) {
       return res.status(400).send({
         status: false,
         msg: "subcategory is reqired to update a blog",
@@ -184,7 +184,7 @@ const deleteQuery = async function (req, res) {
     if (filterbyquery.length === 0) {
       return res.status(404).send({ status: false, mag: "No Such blogs" });
     }
-    decodedToken = req.decodedToken;//{ authorId: '626831fea06a453051dc3c4d', iat: 1651252153 }
+    let decodedToken = req.decodedToken;//{ authorId: '626831fea06a453051dc3c4d', iat: 1651252153 }
     console.log(decodedToken);
     data.authorId = decodedToken.authorId;//{ body: 'all is well', authorId: '626831fea06a453051dc3c4d' }
     console.log(data);
