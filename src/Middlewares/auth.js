@@ -9,9 +9,9 @@ let authentication = async function (req, res, next) {
       return res.status(401).send({ status: false, msg: "Token not present" });
     }
 
-    let decodedToken = jwt.verify(token, "project-1/group-34");
+    let decodedToken = jwt.verify(token, "project-1/group-34"); //{payload and issuedat}
     
-    req.decodedToken = decodedToken;
+    req.decodedToken = decodedToken; //req is our existing object{previous data , decodedtoken:{payload and issuedat}}
     next();
   } catch (err) {
     res.status(401).send({ status: false, msg: "Authentication failed" });

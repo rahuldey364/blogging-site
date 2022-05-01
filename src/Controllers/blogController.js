@@ -4,22 +4,22 @@ const authorModel = require("../Models/authorModel");
 // solution POST /blogs
 const CreateBlog = async function (req, res) {
   try {
-    let blog = req.body;
+    let blog = req.body;//we receive data as a object {}
     console.log(blog);
     //handling edge cases
-    if (Object.keys(blog).length == 0) {
+    if (Object.keys(blog).length == 0) {   //Object.keys(blog).length = 0 
       return res
-        .status(401)
+        .status(400)
         .send({ status: false, msg: "Provide Blog details" });
     }
-    if (!blog.title) {
+    if (!blog.title) { 
       return res
-        .status(401)
+        .status(400)
         .send({ status: false, msg: "Blog title is required" });
     }
-    if (Object.keys(blog.title).length == 0 || blog.title.length == 0) {
+    if (Object.keys(blog.title).length == 0 || blog.title.length == 0) { //empty array or empty object
       return res
-        .status(401)
+        .status(400)
         .send({ status: false, msg: "Enter a valid title" });
     }
     if (!blog.body) {
@@ -33,12 +33,12 @@ const CreateBlog = async function (req, res) {
     let author_id = req.body.authorId;
     if (!author_id) {
       return res
-        .status(401)
+        .status(400)
         .send({ status: false, msg: "First Name is required" });
     }
     if (Object.keys(author_id).length == 0 || author_id.length == 0) {
       return res
-        .status(401)
+        .status(400)
         .send({ status: false, msg: "Enter a valid first name" });
     }
 
@@ -73,11 +73,11 @@ const CreateBlog = async function (req, res) {
 //GET /blogs
 const GetData = async function (req, res) {
   try {
-    let query = req.query;
+    let query = req.query;//as a object{authorId:surbhi,category:math}
 
     console.log(query);
     let GetRecord = await blogModel.find({
-      $and: [{ isPublished: true, isDeleted: false, ...query }],
+      $and: [{ isPublished: true, isDeleted: false, ...query }], //authorid:surbhi,category:math
     }).populate("authorId")
     if (GetRecord.length == 0) {
       return res.status(404).send({
@@ -92,7 +92,7 @@ const GetData = async function (req, res) {
 
 const updateBlog = async function (req, res) {
   try {
-    const blogId = req.params.blogId;
+    const blogId = req.params.blogId; 
     const details = req.body;
     if (!blogId) {
       return res
@@ -116,6 +116,12 @@ const updateBlog = async function (req, res) {
         status: false,
         msg: "subcategory is reqired to update a blog",
       });
+    }
+    if (details.category || details.authorId){
+        return res.status(401).send({
+            status: false,
+            msg: "You cannot change authorId or category",
+        });
     }
     const updatedDetails = await blogModel.findOneAndUpdate(
       { _id: blogId },
