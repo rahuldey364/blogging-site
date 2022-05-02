@@ -28,7 +28,7 @@ const CreateBlog = async function (req, res) {
         .send({ status: false, data: "Blog body is required" });
     }
     if (Object.keys(blog.body).length == 0 || blog.body.length == 0) {
-      return res.status(401).send({ status: false, msg: "Enter a valid body" });
+      return res.status(400).send({ status: false, msg: "Enter a valid body" });
     }
     let author_id = req.body.authorId;
     if (!author_id) {
@@ -58,7 +58,7 @@ const CreateBlog = async function (req, res) {
     }
     if (Object.keys(blog.category).length == 0 || blog.category.length == 0) {
       return res
-        .status(401)
+        .status(400)
         .send({ status: false, data: "Enter a valid category" });
     }
     // console.log(blog)
@@ -100,7 +100,7 @@ const updateBlog = async function (req, res) {
         .send({ status: false, data: "Please enter a blog id" });
     }
     if (details.category || details.authorId){
-        return res.status(401).send({
+        return res.status(400).send({
             status: false,
             data: "You cannot change authorId or category",
         });
@@ -131,7 +131,7 @@ const deleteBlog = async function (req, res) {
     let blogsId = req.params.blogId;
     if (!blogsId) {
       return res
-        .status(401)
+        .status(400)
         .send({ status: false, data: "Please enter a blogId" });
     }
     //console.log(blogsId)
@@ -165,7 +165,7 @@ const deleteQuery = async function (req, res) {
     console.log(data);
     if (Object.keys(data).length == 0) {
       return res
-        .status(401)
+        .status(400)
         .send({ status: false, data: "enter details for delete blogs" });
     }
     const filterbyquery = await blogModel.find(data);

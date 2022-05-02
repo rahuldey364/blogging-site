@@ -6,13 +6,13 @@ const authorLogin = async function (req, res) {
     let authorEmail = req.body.email;
     if (!/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(req.body.email)) {
       return res
-        .status(401)
+        .status(400)
         .send({ status: false, data: "plz enter the valid Email" });
     }
     let authorPassword = req.body.password;
     if (req.body.password.trim().length <= 6) {
       return res
-        .status(401)
+        .status(400)
         .send({ status: false, data: "plz enter the valid Password" });
     }
     let isAuthor = await authorModel.findOne({
