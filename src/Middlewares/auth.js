@@ -6,7 +6,7 @@ let authentication = async function (req, res, next) {
   try {
     let token = req.headers["x-api-key"];
     if (!token) {
-      return res.status(401).send({ status: false, msg: "Token not present" });
+      return res.status(401).send({ status: false, data: "Token not present" });
     }
 
     let decodedToken = jwt.verify(token, "project-1/group-34"); //{payload and issuedat}
@@ -14,7 +14,7 @@ let authentication = async function (req, res, next) {
     req.decodedToken = decodedToken; //req is our existing object{previous data , decodedtoken:{payload and issuedat}}
     next();
   } catch (err) {
-    res.status(401).send({ status: false, msg: "Authentication failed" });
+    res.status(401).send({ status: false, data: "Authentication failed" });
   }
 };
 
@@ -26,7 +26,7 @@ let authorization = async function (req, res, next) {
     if (!isvalidId) {
       return res
         .status(401)
-        .send({ status: false, msg: "Please enter a valid blogId" });
+        .send({ status: false, data: "Please enter a valid blogId" });
     }
     // console.log(isvalidId);
     let authorToBeModified = isvalidId.authorId.toString();
@@ -36,18 +36,18 @@ let authorization = async function (req, res, next) {
         .status(403)
         .send({
           status: false,
-          msg: "Author logged is not allowed to modify the requested authors data",
+          data: "Author logged is not allowed to modify the requested authors data",
         });
     }
     let author = await authorModel.findById(authorToBeModified);
     if (!author) {
       return res
         .status(404)
-        .send({ status: false, msg: "no such author exists" });
+        .send({ status: false, data: "no such author exists" });
     }
     next();
   } catch (err) {
-    res.status(500).send({ status: false, msg: err.message });
+    res.status(500).send({ status: false, data: err.message });
   }
 };
 

@@ -10,22 +10,22 @@ const CreateBlog = async function (req, res) {
     if (Object.keys(blog).length == 0) {   //Object.keys(blog).length = 0 
       return res
         .status(400)
-        .send({ status: false, msg: "Provide Blog details" });
+        .send({ status: false, data: "Provide Blog details" });
     }
     if (!blog.title) { 
       return res
         .status(400)
-        .send({ status: false, msg: "Blog title is required" });
+        .send({ status: false, data: "Blog title is required" });
     }
     if (Object.keys(blog.title).length == 0 || blog.title.length == 0) { //empty array or empty object
       return res
         .status(400)
-        .send({ status: false, msg: "Enter a valid title" });
+        .send({ status: false, data: "Enter a valid title" });
     }
     if (!blog.body) {
       return res
         .status(400)
-        .send({ status: false, msg: "Blog body is required" });
+        .send({ status: false, data: "Blog body is required" });
     }
     if (Object.keys(blog.body).length == 0 || blog.body.length == 0) {
       return res.status(401).send({ status: false, msg: "Enter a valid body" });
@@ -34,12 +34,12 @@ const CreateBlog = async function (req, res) {
     if (!author_id) {
       return res
         .status(400)
-        .send({ status: false, msg: "authorId is required" });
+        .send({ status: false, data: "authorId is required" });
     }
     if (Object.keys(author_id).length == 0 || author_id.length == 0) {
       return res
         .status(400)
-        .send({ status: false, msg: "Enter a valid authorId" });
+        .send({ status: false, data: "Enter a valid authorId" });
     }
 
     // console.log(author_id)
@@ -48,25 +48,25 @@ const CreateBlog = async function (req, res) {
     if (!authorDetail) {
       return res
         .status(404)
-        .send({ status: false, msg: "No Such Author exists" });
+        .send({ status: false, data: "No Such Author exists" });
     }
 
     if (!blog.category) {
       return res
         .status(400)
-        .send({ status: false, msg: "Blog category is required" });
+        .send({ status: false,data: "Blog category is required" });
     }
     if (Object.keys(blog.category).length == 0 || blog.category.length == 0) {
       return res
         .status(401)
-        .send({ status: false, msg: "Enter a valid category" });
+        .send({ status: false, data: "Enter a valid category" });
     }
     // console.log(blog)
     let blogCreate = await blogModel.create(blog);
-    res.status(201).send({ status: true, msg: blogCreate });
+    res.status(201).send({ status: true, data: blogCreate });
   } catch (err) {
     // console.log("This is the error 1", err.message)
-    res.status(500).send({ status: false, msg: err.message });
+    res.status(500).send({ status: false, data: err.message });
   }
 };
 
@@ -81,12 +81,12 @@ const GetData = async function (req, res) {
     }).populate("authorId")
     if (GetRecord.length == 0) {
       return res.status(404).send({
-        msg: "No such document exist with the given attributes.",
+        data: "No such document exist with the given attributes.",
       });
     }
-    res.status(200).send({ status: true, msg: GetRecord });
+    res.status(200).send({ status: true, data: GetRecord });
   } catch (err) {
-    res.status(500).send({ status: false, msg: err.message });
+    res.status(500).send({ status: false, data: err.message });
   }
 };
 
@@ -97,7 +97,7 @@ const updateBlog = async function (req, res) {
     if (!blogId) {
       return res
         .status(400)
-        .send({ status: false, msg: "Please enter a blog id" });
+        .send({ status: false, data: "Please enter a blog id" });
     }
     // const isvalidId = await blogModel.find({_id:blogId,isDeleted:false});
     // if (isvalidId.length ==0) {
@@ -108,19 +108,19 @@ const updateBlog = async function (req, res) {
     if (!details.tags || details.tags.length == 0 || Object.keys(details.tags).length==0) {
       return res.status(400).send({
         status: false,
-        msg: "tags  is required to update a blog",
+        data: "tags  is required to update a blog",
       });
     }
     if (!details.subcategory || details.subcategory.length == 0 || Object.keys(details.subcategory).length==0) {
       return res.status(400).send({
         status: false,
-        msg: "subcategory is reqired to update a blog",
+        data: "subcategory is reqired to update a blog",
       });
     }
     if (details.category || details.authorId){
         return res.status(401).send({
             status: false,
-            msg: "You cannot change authorId or category",
+            data: "You cannot change authorId or category",
         });
     }
     const updatedDetails = await blogModel.findOneAndUpdate(
@@ -136,10 +136,10 @@ const updateBlog = async function (req, res) {
       },
       { new: true, upsert: true }
     );
-    res.status(201).send({ status: true, msg: updatedDetails });
+    res.status(201).send({ status: true, data: updatedDetails });
   } catch (err) {
     console.log("This is the error 1", err.message);
-    res.status(500).send({ status: false, msg: err.message });
+    res.status(500).send({ status: false, data: err.message });
   }
 };
 
@@ -150,7 +150,7 @@ const deleteBlog = async function (req, res) {
     if (!blogsId) {
       return res
         .status(401)
-        .send({ status: false, msg: "Please enter a blogId" });
+        .send({ status: false, data: "Please enter a blogId" });
     }
     //console.log(blogsId)
     let blog = await blogModel.findById(blogsId);
@@ -158,12 +158,12 @@ const deleteBlog = async function (req, res) {
     if (!blog) {
       return res
         .status(404)
-        .send({ status: false, msg: "No such Blog exists" });
+        .send({ status: false, data: "No such Blog exists" });
     }
     if (blog.isDeleted === true) {
       return res
         .status(404)
-        .send({ status: false, msg: "Blog already deleted" });
+        .send({ status: false, data: "Blog already deleted" });
     }
     let deleteBlogs = await blogModel.findOneAndUpdate(
       { _id: blogsId },
@@ -172,7 +172,7 @@ const deleteBlog = async function (req, res) {
     );
     res.status(200).send({ status: true, data: deleteBlogs });
   } catch (err) {
-    res.status(500).send({ status: false, msg: err.massage });
+    res.status(500).send({ status: false, data: err.massage });
   }
 };
 
@@ -184,11 +184,11 @@ const deleteQuery = async function (req, res) {
     if (Object.keys(data).length == 0) {
       return res
         .status(401)
-        .send({ status: false, msg: "enter details for delete blogs" });
+        .send({ status: false, data: "enter details for delete blogs" });
     }
     const filterbyquery = await blogModel.find(data);
     if (filterbyquery.length === 0) {
-      return res.status(404).send({ status: false, mag: "No Such blogs" });
+      return res.status(404).send({ status: false, data: "No Such blogs" });
     }
     let decodedToken = req.decodedToken;//{ authorId: '626831fea06a453051dc3c4d', iat: 1651252153 }
     console.log(decodedToken);
@@ -200,7 +200,7 @@ const deleteQuery = async function (req, res) {
         .status(401)
         .send({
           status: false,
-          msg: "no such blogs found with your provided details authorized with your login credentials ",
+          data: "no such blogs found with your provided details authorized with your login credentials ",
         });
     }
     console.log(authorBlog);
@@ -213,13 +213,13 @@ const deleteQuery = async function (req, res) {
       { new: true }
     );
     if(deleteDetails.modifiedCount==0){
-        return res.status(404).send({status:false,msg:"Blog already deleted"})
+        return res.status(404).send({status:false,data:"Blog already deleted"})
     }
     // console.log(deleteDetails)
-    res.status(201).send({ status: true, msg: deleteDetails });
+    res.status(201).send({ status: true, data: deleteDetails });
   } catch (err) {
     console.log("This is the error 1", err.massage);
-    res.status(500).send({ status: false, msg: err.massage });
+    res.status(500).send({ status: false, data: err.massage });
   }
 };
 
