@@ -25,7 +25,7 @@ const createAuthor = async function (req, res) {
     if (["Mr", "Mrs", "Miss"].indexOf(data.title) == -1) {
       return res.status(401).send({
         status: false,
-        msg: `Enter a valid title ["Mr","Mrs","Miss"] `,
+        msg: "Enter a valid title Mr or Mrs or Miss ",
       });
     }
     if (!data.email) {
@@ -47,7 +47,7 @@ const createAuthor = async function (req, res) {
     if (!data.password) {
       return res
         .status(401)
-        .send({ status: false, msg: "Last Name is required" });
+        .send({ status: false, msg: "password is required" });
     }
     if (data.password.trim().length <= 6) {
       return res

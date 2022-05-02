@@ -35,7 +35,7 @@ const authorSchema = new mongoose.Schema(
       type: String,
       require: [true, "Password is required"],
       trim: true,
-      minimum: 6,
+      minimum: 6
     },
   },
   { timestamps: true }

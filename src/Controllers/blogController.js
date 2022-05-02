@@ -34,12 +34,12 @@ const CreateBlog = async function (req, res) {
     if (!author_id) {
       return res
         .status(400)
-        .send({ status: false, msg: "First Name is required" });
+        .send({ status: false, msg: "authorId is required" });
     }
     if (Object.keys(author_id).length == 0 || author_id.length == 0) {
       return res
         .status(400)
-        .send({ status: false, msg: "Enter a valid first name" });
+        .send({ status: false, msg: "Enter a valid authorId" });
     }
 
     // console.log(author_id)
