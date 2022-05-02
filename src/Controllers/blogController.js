@@ -118,7 +118,7 @@ const updateBlog = async function (req, res) {
       },
       { new: true, upsert: true }
     );
-    res.status(201).send({ status: true, data: updatedDetails });
+    res.status(200).send({ status: true, data: updatedDetails });
   } catch (err) {
     console.log("This is the error 1", err.message);
     res.status(500).send({ status: false, data: err.message });
@@ -198,7 +198,7 @@ const deleteQuery = async function (req, res) {
         return res.status(404).send({status:false,data:"Blog already deleted"})
     }
     // console.log(deleteDetails)
-    res.status(201).send({ status: true, data: deleteDetails });
+    res.status(200).send({ status: true, data: deleteDetails });
   } catch (err) {
     console.log("This is the error 1", err.massage);
     res.status(500).send({ status: false, data: err.massage });
