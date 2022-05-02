@@ -99,18 +99,6 @@ const updateBlog = async function (req, res) {
         .status(400)
         .send({ status: false, data: "Please enter a blog id" });
     }
-    if (!details.tags || details.tags.length == 0 || Object.keys(details.tags).length==0) {
-      return res.status(400).send({
-        status: false,
-        data: "tags  is required to update a blog",
-      });
-    }
-    if (!details.subcategory || details.subcategory.length == 0 || Object.keys(details.subcategory).length==0) {
-      return res.status(400).send({
-        status: false,
-        data: "subcategory is reqired to update a blog",
-      });
-    }
     if (details.category || details.authorId){
         return res.status(401).send({
             status: false,
